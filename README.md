@@ -2,8 +2,9 @@
 example code for interacting with solana anchor programs - candymachine
 
 THIS IS PURELY SAMPLE CODE TO FORK, MODIFY, UNDERSTAND AND INTERACT WITH CANDYMACHINE USING ANCHORPY
-I'll probably work on making this more resilient and fully featured, but at the moment, it's mainly to be used as an example of how to use anchorpy, and to understand candy machine better
-the candymachine typescript client is amazing, but it couples together too many concerns - this is meant to interact with each instruction separately
+
+I'll probably work on making this more resilient and fully featured, but at the moment, it's mainly to be used as an example of how to use anchorpy, and to understand candy machine better.
+the candymachine typescript client is amazing, but it couples together too many concerns - this is meant to interact with each instruction separately.
 
 Interaction is primarily via command line to make it more explicit
 
