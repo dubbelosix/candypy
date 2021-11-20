@@ -92,11 +92,35 @@ create the actual cnady machine account
 
 `python main.py initialize_candy_machine  myfolder/wallet.json 0.5 now 10 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
 
+"now" is s convenience ooption, but you want to pass the epoch timestamp of when you want the machine to go live
 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf as you know is the config account address
 ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q in this case is the wallet that should hold treasury funds
 
 # step 7
+candy machine can be optionally updated. as many times as you like. Its mainly the price and the live date
+`python main.py update_candy_machine myfolder/wallet.json 0.33 now 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf`
+- price
+- time (epoch)
+- config address
 
+#step 8
+This is actually the most complex part. Here is what's happening when you're minting an NFT
+## NON ANCHOR INSTRUCTIONS
+0. IMPORTANT: this is from a client side, so you would preferably want to configure another wallet + airdrop some sol in it.
+1. you create a new NFT token
+2. you create an associated token account derived from your main address to "hold" the NFT
+3. you allocate some default mint space for the account (based on some constants) - rent exempt amount because these need to be permanent
+4. you add approval for the candymachine to transfer the NFT out of your wallet, modify it and return the NFT token (now with metadata populated
+
+## Anchor insturctuions
+1. The ancor mint command doesn't take any args and just takes a list of accounts and signatures
+
+`python main.py mint myfolder/client-wallet.json 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
+
+myfolder/client-wallet.json is the new wallet creator for client side
+config address - same old, 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf
+ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - treaury address
+ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - authority
 
 
 
