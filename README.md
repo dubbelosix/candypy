@@ -115,7 +115,7 @@ This is actually the most complex part. Here is what's happening when you're min
 ## Anchor insturctuions
 1. The ancor mint command doesn't take any args and just takes a list of accounts and signatures
 
-`python main.py mint myfolder/client-wallet.json 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
+`python main.py mint myfolder/client-wallet.json 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q NAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
 
 myfolder/client-wallet.json is the new wallet creator for client side
 config address - same old, 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf
