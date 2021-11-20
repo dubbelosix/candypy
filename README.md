@@ -123,4 +123,11 @@ ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - treaury address
 ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - authority
 
 
+# step 8
+once this is done, you can simply check the balance of your accont
+`spl-token accounts --owner`
+Token                                         Balance
+---------------------------------------------------------------
+3W5RhXSBs5zyRpqeGUrC4xrN3ppNnRdBeYDYU3X1bhrp  1
+
 
