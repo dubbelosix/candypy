@@ -11,7 +11,7 @@ the candymachine typescript client is amazing, but it couples together too many 
 
 Interaction is primarily via command line arguments, rather than config files, to make it more explicit
 
-# some information about candymachine
+## some information about candymachine
 1. candymachine is an anchor program
 2. while a large portion of interacting with it is via anchorpy, there are still a few places where the interactions are directly through solanapy - mostly using spl-token, spl-token-metadata
 
