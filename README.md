@@ -3,34 +3,40 @@ example code for interacting with solana anchor programs - candymachine
 
 THIS IS PURELY SAMPLE CODE TO FORK, MODIFY, UNDERSTAND AND INTERACT WITH CANDYMACHINE USING ANCHORPY
 
-I'll probably work on making this more resilient and fully featured, but at the moment, it's mainly to be used as an example of how to use anchorpy, and to understand candy machine better.
+I'll probably work on making this more resilient and fully featured, but at the moment, it mainly serves as an example for 
+1. how to use anchorpy
+2. to understand candymachine better.
+
 the candymachine typescript client is amazing, but it couples together too many concerns - this is meant to interact with each instruction separately.
 
-Interaction is primarily via command line to make it more explicit
+Interaction is primarily via command line arguments, rather than config files, to make it more explicit
 
 # some information about candymachine
 1. candymachine is an anchor program
-2. while a large portion of interacting with it is via anchorpy, there are still a few places where the interactions are directly through solanapy - mostly interactions with spl-token, spl-token-metadata
+2. while a large portion of interacting with it is via anchorpy, there are still a few places where the interactions are directly through solanapy - mostly using spl-token, spl-token-metadata
 
 # accounts used
 There are 2 main accounts used by candymachine
 1. A config account which keeps track of total supply as well as rows [{ name: name, nft_metadata_uri: nft_metadata_uri}]
-2. A candymachine account which keeps track of the price and the date to go live
+2. A candymachine account which keeps track of the price and the date to go live (this can be updated)
 
-# creating a candy machine involves the following steps at a high level
+# steps involved 
+creating a candy machine involves the following steps at a high level
 1. creating the config account  - using the create_config_account option. This is not an anchor interaction, but a vanilla interaction with the system program
-2. Initialization the config account (this is mainly allocating space for it based on the number of NFTs to be loaded, as well as paying rent) - using the initialize_config_account command (anchor)
+2. Initializating the config account (this is mainly allocating space for it based on the number of NFTs to be loaded, as well as paying rent) - using the initialize_config_account command (anchor)
 3. add NFTs into the config account (load the names and metadata urls for each nft as a separate row) - add_config_lines (anchor)
-4. create the main candymachine account (this is the second one). It will keep track of price, livedate, item count, treasury address which gets the payment
-5. update the candymachine account (this is optional, in case you want to change the date or the mint or the price)
+4. create the main candymachine account (this is the second account). It will keep track of price, livedate, item count, treasury address which gets the payment
+5. update the candymachine account (this is optional, in case you want to change the date of the mint or the price)
 6. Mint. This is usually done through a browser client, but for illustration purposes the code also includes a mint command
 
-# step 1 - install the necessary stuff
+# step 1 
+install the necessary packages
 `pip install -r requirements.txt`
 
-also install the solana command line cli. its pretty useful
+also install the solana command line cli. 
 
-# step 2 - configure solana cli for the devnet and get an airdrop of 5-10 sol
+# step 2 
+configure solana cli for the devnet and get an airdrop of 5-10 sol
 `solana-keygen -o myfolder/wallet.json`
 
 `solana config set -u d`
@@ -113,19 +119,19 @@ This is actually the most complex part. Here is what's happening when you're min
 3. you allocate some default mint space for the account (based on some constants) - rent exempt amount because these need to be permanent
 4. you add approval for the candymachine to transfer the NFT out of your wallet, modify it and return the NFT token (now with metadata populated
 
-## Anchor insturctuions
-1. The ancor mint command doesn't take any args and just takes a list of accounts and signatures
+## Anchor instructions
+1. The anchor mint command doesn't take any args and just takes a list of accounts and signatures
 
 `python main.py mint myfolder/client-wallet.json 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q NAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
 
 myfolder/client-wallet.json is the new wallet creator for client side
 config address - same old, 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf
-ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - treaury address
+ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - treasury address
 ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - authority
 
 
 # step 8
-once this is done, you can simply check the balance of your accont
+once this is done, you can simply check the balance of your account
 `spl-token accounts --owner`
 Token                                         Balance
 ---------------------------------------------------------------
