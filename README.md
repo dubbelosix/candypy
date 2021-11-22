@@ -110,7 +110,7 @@ candy machine can be optionally updated. as many times as you like. Its mainly t
 - time (epoch)
 - config address
 
-#step 8
+# step 8
 This is actually the most complex part. Here is what's happening when you're minting an NFT
 ## NON ANCHOR INSTRUCTIONS
 0. IMPORTANT: this is from a client side, so you would preferably want to configure another wallet + airdrop some sol in it.
@@ -120,6 +120,7 @@ This is actually the most complex part. Here is what's happening when you're min
 4. you add approval for the candymachine to transfer the NFT out of your wallet, modify it and return the NFT token (now with metadata populated
 
 ## Anchor instructions
+
 1. The anchor mint command doesn't take any args and just takes a list of accounts and signatures
 
 `python main.py mint myfolder/client-wallet.json 2yeCtaKgESShtnDWdH24EuhZLrfnkVoHk9t3WmmnJcaf ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q NAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q`
@@ -131,8 +132,11 @@ ANAwyQU9HCZXaKkypAHkvTGzDEDGvVsHxto7jLhenp7q - authority
 
 
 # step 8
+
 once this is done, you can simply check the balance of your account
+
 `spl-token accounts --owner`
+
 Token                                         Balance
 ---------------------------------------------------------------
 3W5RhXSBs5zyRpqeGUrC4xrN3ppNnRdBeYDYU3X1bhrp  1
