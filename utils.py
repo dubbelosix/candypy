@@ -4,6 +4,8 @@ import math
 from jsonschema import validate
 
 from solana.keypair import Keypair
+from solana.publickey import PublicKey
+
 from constants import CONFIG_ARRAY_START, CONFIG_LINE_SIZE
 
 
@@ -16,6 +18,9 @@ def get_keypair(keypath):
     with open(keypath) as f:
         kpb = json.loads(f.read())
     return Keypair.from_secret_key(secret_key=bytes(kpb))
+
+def get_keypair_from_byte_list(blist):
+    return Keypair.from_secret_key(secret_key=bytes(blist))
 
 
 def get_config_space(num_lines):
@@ -53,6 +58,8 @@ def get_creator_array(json_file):
     with open(json_file) as f:
         json_contents = json.loads(f.read())
     validate(instance=json_contents, schema=creator_array_json_schema)
+    for c in json_contents:
+        c["address"] = PublicKey(c["address"])
     return json_contents
 
 def get_nft_rows(json_file):
@@ -72,3 +79,5 @@ def get_nft_rows(json_file):
         json_contents = json.loads(f.read())
     validate(instance=json_contents, schema=nft_array_json_schema)
     return json_contents
+
+# print(get_creator_array("sample_files\\creator_array.json"))

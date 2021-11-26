@@ -3,6 +3,7 @@ import asyncio
 import argparse
 import math
 import time
+import json
 
 from solana.keypair import Keypair
 from solana.rpc.async_api import AsyncClient
@@ -16,9 +17,10 @@ from vanilla_instructions import get_create_new_config_account_instructions, get
     get_approval_instruction
 from anchor_commands.add_config_lines import add_nfts_to_machine
 from anchor_commands.initialize_config import initialize_candymachine_for_config_account
+from anchor_commands.mint_prepped_nft import mint_prepped_nft
 
 from constants import DEVNET, TESTNET, MAINNET
-from utils import get_keypair, get_default_creator_array, get_creator_array, get_nft_rows
+from utils import get_keypair, get_default_creator_array, get_creator_array, get_nft_rows, get_keypair_from_byte_list
 
 if os.name == 'nt':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -87,6 +89,22 @@ async def main():
     parser_mint.add_argument('config_pub_key', action="store", help='public key of config account')
     parser_mint.add_argument('treasury_pub_key', action="store", help='wallet pub key')
     parser_mint.add_argument('mint_auth', action="store", help='wallet pub key')
+
+    parser_mint_pre = subparsers.add_parser('gen_pre_mint',
+                                        help='generate pre mint configuration')
+    parser_mint_pre.add_argument('payment_key', action="store", help='path to the keypair used for payments')
+    parser_mint_pre.add_argument('num_accounts', action="store", help='num accounts to generate')
+    parser_mint_pre.add_argument('mint_file', action="store", help='file to store mint keys in')
+
+    parser_mint_prepped_nft = subparsers.add_parser('mint_prepped_nft',
+                                        help='generate pre mint configuration')
+    parser_mint_prepped_nft.add_argument('payment_key', action="store", help='path to the keypair used for payments')
+    parser_mint_prepped_nft.add_argument('mint_file', action="store", help='file containing mint keys in')
+    parser_mint_prepped_nft.add_argument('purchase_token_address', action="store", help='purchase_token_address (spl token mint addr)')
+    parser_mint_prepped_nft.add_argument('config_pub_key', action="store", help='public key of config account')
+    parser_mint_prepped_nft.add_argument('treasury_pub_key', action="store", help='wallet pub key')
+    parser_mint_prepped_nft.add_argument('mint_auth', action="store", help='wallet pub key')
+
 
     args = parser.parse_args()
 
@@ -162,6 +180,7 @@ async def main():
         else:
             livedate = int(args.livedate)
         candy_machine_pda, bump = get_candy_machine_pda_nonce(config_pub_key_str)
+        print("created candy machine with address: %s" % (candy_machine_pda.to_base58().decode()))
         response = await initialize_candy_machine(async_client,
                                                   payment_keypair,
                                                   config_pub_key_str,
@@ -172,7 +191,6 @@ async def main():
                                                   price,
                                                   itemcount
                                                   )
-        print("created candy machine with address: %s" % (candy_machine_pda.to_base58().encode()))
         print(response)
 
     # anchor
@@ -193,6 +211,7 @@ async def main():
                              livedate)
         print(result)
 
+    # anchor with vanilla
     elif args.subcommand_name == "mint":
         async_client = AsyncClient(endpoint=use_network)
         config_pub_key_str = args.config_pub_key
@@ -205,6 +224,50 @@ async def main():
         result = await mint_one_nft(async_client, payment_keypair, config_pub_key_str,
                            mint_account, treasury_pub_key_str, account_create_instructions + approval_instruction)
         print(result)
+
+    # vanilla
+    elif args.subcommand_name == "gen_pre_mint":
+        async_client = AsyncClient(endpoint=use_network)
+        num_accounts = int(args.num_accounts)
+        mint_key_file = args.mint_file
+        mint_account_list = []
+        for i in range(0,num_accounts):
+            mint_account, account_create_instructions, signers = await get_user_account_mint_prep_instructions(async_client,
+                                                                                                           payment_keypair)
+            mint_account_list.append(mint_account)
+        # approval_instruction, signers = get_approval_instruction(payment_keypair,
+        #                                                   mint_account.public_key, 1)
+
+            response = await run_instructions(async_client, account_create_instructions, signers)
+
+            print(response)
+        with open(mint_key_file,"w") as f:
+            for m in mint_account_list:
+                f.write(json.dumps(list(m.secret_key)))
+                f.write("\n")
+
+    # anchor
+    elif args.subcommand_name == "mint_prepped_nft":
+        async_client = AsyncClient(endpoint=use_network)
+        mint_file = args.mint_file
+
+        mint_keys = []
+        with open(mint_file) as f:
+            lines = f.read().split("\n")
+            for l in lines:
+                if len(l) > 0:
+                    mint_keys.append(get_keypair_from_byte_list(json.loads(l)))
+        config_pub_key_str = args.config_pub_key
+        treasury_pub_key_str = args.treasury_pub_key
+        purchase_token_address = args.purchase_token_address
+
+        for m in mint_keys:
+            approval_instruction, transfer_authority_keypair = get_approval_instruction(payment_keypair,
+                                                                     purchase_token_address, 1)
+            result = await mint_prepped_nft(async_client, payment_keypair, config_pub_key_str,
+                           m, treasury_pub_key_str, approval_instruction,transfer_authority_keypair)
+            print(result)
+
 
 
 asyncio.run(main())

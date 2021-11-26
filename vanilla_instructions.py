@@ -77,21 +77,19 @@ async def get_user_account_mint_prep_instructions(async_client, user_account):
 
     return (mint_account, instruction_list, [user_account, mint_account])
 
-def get_approval_instruction(user_account, mint_account_public_key, amount):
-    transfer_authority = Keypair()
-    instruction_list = []
+def get_approval_instruction(user_account, purchase_token, amount):
+    transfer_authority_keypair = Keypair()
     assoc_token_account_public_key = get_associated_token_address(user_account.public_key,
-                                                                  mint_account_public_key)
+                                                                  PublicKey(purchase_token))
     approval_instruction = approve(
         ApproveParams(
             program_id=TOKEN_PROGRAM_ID,
             source=assoc_token_account_public_key,
-            delegate=transfer_authority.public_key,
+            delegate=transfer_authority_keypair.public_key,
             owner=user_account.public_key,
             amount=amount
         )
     )
 
-    instruction_list.append(approval_instruction)
-    return (instruction_list, [user_account, transfer_authority])
+    return (approval_instruction, transfer_authority_keypair)
 

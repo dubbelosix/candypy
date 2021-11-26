@@ -60,7 +60,7 @@ async def initialize_candymachine_for_config_account(
         "symbol": nft_symbol,
         "seller_fee_basis_points": seller_basis,
         "is_mutable": is_mut,
-        "max_supply": max_supply,
+        "max_supply": 1,
         "retain_authority": True,
         "creators": creator_array
     },
